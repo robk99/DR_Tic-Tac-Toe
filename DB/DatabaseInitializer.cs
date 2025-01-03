@@ -161,9 +161,9 @@ namespace DR_Tic_Tac_Toe.DB
                     Player1Id = 2,
                     Player2Id = 4,
                     Status = (int)GameStatus.Completed,
-                    TurnCount = 5,
-                    BoardState = "111220000",
-                    WinnerId = 2
+                    TurnCount = 7,
+                    BoardState = "222110110",
+                    WinnerId = 4
                 },
                 new Game {
                     StartTime = DateTime.Now,
@@ -190,6 +190,15 @@ namespace DR_Tic_Tac_Toe.DB
                     Status = (int)GameStatus.Open,
                     TurnCount = 1,
                     BoardState = "100000000",
+                    WinnerId = null
+                },
+                 new Game {
+                    StartTime = DateTime.Now.AddDays(-10),
+                    Player1Id = 4,
+                    Player2Id = 3,
+                    Status = (int)GameStatus.Completed,
+                    TurnCount = 9,
+                    BoardState = "121211212",
                     WinnerId = null
                 },
             };

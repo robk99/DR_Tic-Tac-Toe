@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DR_Tic_Tac_Toe.DTOs;
 using DR_Tic_Tac_Toe.DTOs.Requests;
+using DR_Tic_Tac_Toe.Models;
 
 namespace DR_Tic_Tac_Toe.DB.Repositories
 {
@@ -54,6 +55,18 @@ namespace DR_Tic_Tac_Toe.DB.Repositories
             parameters.Add("@Offset", (request.Page - 1) * request.Size);
 
             return await connection.QueryAsync<GameDto>(query, parameters);
+        }
+
+        public async Task<Game?> GetDetails(int id)
+        {
+            using var connection = _database.CreateConnection();
+
+            var query = @"
+                SELECT *
+                FROM Games g
+                WHERE g.Id = @Id";
+
+            return await connection.QueryFirstOrDefaultAsync<Game>(query, new { Id = id });
         }
     }
 }

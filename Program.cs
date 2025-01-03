@@ -21,6 +21,7 @@ services
     .AddAuthorization();
 services.AddDatabase();
 services.AddScoped<UserMapper>();
+services.AddScoped<GameMapper>();
 
 var app = builder.Build();
 
