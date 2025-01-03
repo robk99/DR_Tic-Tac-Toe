@@ -81,5 +81,21 @@ namespace DR_Tic_Tac_Toe.DB.Repositories
             
             return rowsAffected > 0;
         }
+
+
+        public async Task<bool> Update(Game game)
+        {
+            using var connection = _database.CreateConnection();
+
+            var command = @"
+            UPDATE Games 
+            SET Player2Id = @Player2Id, BoardState = @BoardState, TurnCount = @TurnCount, 
+                WinnerId = @WinnerId, Status = @Status
+            WHERE Id = @Id;";
+
+            var rowsAffected = await connection.ExecuteAsync(command, game);
+
+            return rowsAffected > 0;
+        }
     }
 }

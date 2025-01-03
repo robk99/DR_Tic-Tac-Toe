@@ -3,7 +3,10 @@
     public static class UserErrors
     {
         public static Error NotFoundByEmail(string username) =>
-            Error.NotFound($"The user with the username '{username}' was not found.");
+            BaseErrors.NotFoundByproperty("user", "username", username);
+
+        public static Error NotFoundById(int id) =>
+            BaseErrors.NotFoundByproperty("user", "id", id);
 
         public static Error WrongPassword(string email) =>
             Error.NotFound("The password you provided is not correct.");
@@ -13,5 +16,8 @@
 
         public static Error Unauthorized(string? message = null) =>
             Error.Unauthorized(message ?? "User not authenticated");
+
+        public static Error RegisterFailed() =>
+            Error.Problem("Registration failed, try again.");
     }
 }

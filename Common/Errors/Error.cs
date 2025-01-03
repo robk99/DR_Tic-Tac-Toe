@@ -3,12 +3,12 @@
     public record Error
     {
         public string Message { get; set; }
-        public string Description { get; }
 
-        public Error(string message, string? description = null)
+        // Add description, status code, etc. if needed
+
+        public Error(string message)
         {
             Message = message;
-            Description = description ?? string.Empty;
         }
 
         public static Error NotFound(string message) =>
@@ -19,5 +19,8 @@
 
         public static Error Unauthorized(string message) =>
             new(message);
+
+        public static Error Problem(string message) =>
+          new(message);
     }
 }

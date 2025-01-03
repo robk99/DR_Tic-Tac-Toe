@@ -36,6 +36,7 @@ namespace DR_Tic_Tac_Toe.Controllers
 
             var user = _userMapper.FromRegistrationRequestToModel(request);
             var created = await _userRepository.Add(user);
+            if (!created) return Problem(UserErrors.RegisterFailed().Message);
 
             return Created("", new { created });
         }
@@ -62,7 +63,7 @@ namespace DR_Tic_Tac_Toe.Controllers
             if (id < 1) return BadRequest(new { error = "Id not greter than 0!" });
 
             var userDetails = await _userRepository.GetDetails(id);
-            if (userDetails == null) return NotFound(null);
+            if (userDetails == null) return NotFound(UserErrors.NotFoundById(id));
             
             return Ok(userDetails);
         }

@@ -13,6 +13,8 @@ namespace DR_Tic_Tac_Toe.Utils
         /// <returns></returns>
         public static string SetValueOnAField(int field, string boardState, GameIcons? iconValue = null)
         {
+            // TODO: Validate that a field where you're setting a value is empty
+
             char value;
             if (iconValue == null) value = ((int)GameIcons.X).ToString()[0];
             else if (iconValue == GameIcons.Empty) throw new Exception("Cannot set empty value on a field");

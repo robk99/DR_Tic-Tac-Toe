@@ -56,11 +56,11 @@ namespace DR_Tic_Tac_Toe.Mappers
             };
         }
 
-        public Game CreateNewGame(CreateNewGameRequest request)
+        public Game CreateNewGame(NewGameMoveRequest request, int userId)
         {
             var game = new Game
             {
-                Player1Id = request.UserId,
+                Player1Id = userId,
                 StartTime = DateTime.Now
             };
 
