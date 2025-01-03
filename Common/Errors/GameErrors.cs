@@ -14,7 +14,14 @@
              $"because maximum number of players are already playing this game");
 
         public static Error GameFinished(int id) =>
-            Error.Conflict($"Cannot join the game with the id '{id}' " +
+            Error.Conflict($"Cannot change anything on the game with the id '{id}' " +
             $"because this game is already finished.");
+
+        public static Error NotPartOfThisGame(int id) =>
+            Error.Conflict($"Cannot play a move on the game with the id '{id}' " +
+               $"because you are not part of this game.");
+
+        public static Error FieldIsAlredyPopulated(int field) =>
+            Error.Conflict($"Field '{field}' is already populated.");
     }
 }

@@ -56,7 +56,7 @@ namespace DR_Tic_Tac_Toe.Mappers
             };
         }
 
-        public Game CreateNewGame(NewGameMoveRequest request, int userId)
+        public Game CreateNewGame(StartNewGameRequest request, int userId)
         {
             var game = new Game
             {
@@ -64,7 +64,8 @@ namespace DR_Tic_Tac_Toe.Mappers
                 StartTime = DateTime.Now
             };
 
-            game.BoardState = Gameutils.SetValueOnAField(request.Field, game.BoardState);
+            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState);
+            game.BoardState = changeBoardDto.NewBoardState;
 
             return game;
         }

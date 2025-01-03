@@ -5,6 +5,7 @@ using DR_Tic_Tac_Toe.DTOs.Game;
 using DR_Tic_Tac_Toe.DTOs.Game.Requests;
 using DR_Tic_Tac_Toe.Enums;
 using DR_Tic_Tac_Toe.Mappers;
+using DR_Tic_Tac_Toe.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,7 +52,7 @@ namespace DR_Tic_Tac_Toe.Controllers
 
         [HttpPost("start-new")]
         [ServiceFilter(typeof(ValidateUserFilter))]
-        public async Task<ActionResult> StartNew([FromBody] NewGameMoveRequest request)
+        public async Task<ActionResult> StartNew([FromBody] StartNewGameRequest request)
         {
             // TODO: Add fluent validation for just 1-9 Fields
 
@@ -87,6 +88,49 @@ namespace DR_Tic_Tac_Toe.Controllers
 
             game.Player2Id = userId;
             game.Status = (int)GameStatus.InProgress;
+
+            var updated = await _gameRepository.Update(game);
+            if (!updated) return Problem(DBErrors.UpdateFailed().Message);
+
+            return Ok(new { updated });
+        }
+
+
+        [HttpPut("play-move")]
+        [ServiceFilter(typeof(ValidateUserFilter))]
+        public async Task<ActionResult> PlayAMove([FromBody] NewGameMoveRequest request)
+        {
+            // TODO: Add fluent validation for just 1-9 Fields
+
+            var userId = (int)HttpContext.Items["UserId"];
+
+            var game = await _gameRepository.GetDetails(request.GameId);
+            if (game == null)
+                return NotFound(GameErrors.NotFoundById(request.GameId));
+
+            if (game.Player1Id != userId && game.Player2Id != userId)
+                return Conflict(GameErrors.NotPartOfThisGame(request.GameId));
+
+            if (game.Status == (int)GameStatus.Completed)
+                return Conflict(GameErrors.GameFinished(request.GameId));
+
+            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState);
+            if (changeBoardDto.Error != null) return Conflict(changeBoardDto.Error);
+
+            game.BoardState = changeBoardDto.NewBoardState;
+
+            var gameFinishedDto = Gameutils.IsGameFinished(game.BoardState);
+            if (gameFinishedDto.GameFinished)
+            {
+                game.Status = (int)GameStatus.Completed;
+                if (gameFinishedDto.Winner != null)
+                {
+                    game.WinnerId = gameFinishedDto.Winner == GameIcons.X ? game.Player1Id : game.Player2Id;
+                }
+            }
+            else game.Status = (int)GameStatus.InProgress;
+
+            game.TurnCount++;
 
             var updated = await _gameRepository.Update(game);
             if (!updated) return Problem(DBErrors.UpdateFailed().Message);

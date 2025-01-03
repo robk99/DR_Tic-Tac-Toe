@@ -192,13 +192,22 @@ namespace DR_Tic_Tac_Toe.DB
                     BoardState = "100000000",
                     WinnerId = null
                 },
-                 new Game {
+                new Game {
                     StartTime = DateTime.Now.AddDays(-10),
                     Player1Id = 4,
                     Player2Id = 3,
                     Status = (int)GameStatus.Completed,
                     TurnCount = 9,
                     BoardState = "121211212",
+                    WinnerId = null
+                },
+                new Game {
+                    StartTime = DateTime.Now.AddDays(-5),
+                    Player1Id = 1,
+                    Player2Id = 2,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 8,
+                    BoardState = "122211210",
                     WinnerId = null
                 },
             };
