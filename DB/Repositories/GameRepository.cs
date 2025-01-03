@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using DR_Tic_Tac_Toe.DTOs;
-using DR_Tic_Tac_Toe.DTOs.Requests;
+using DR_Tic_Tac_Toe.DTOs.Game;
+using DR_Tic_Tac_Toe.DTOs.Game.Requests;
 using DR_Tic_Tac_Toe.Models;
 
 namespace DR_Tic_Tac_Toe.DB.Repositories
@@ -67,6 +67,19 @@ namespace DR_Tic_Tac_Toe.DB.Repositories
                 WHERE g.Id = @Id";
 
             return await connection.QueryFirstOrDefaultAsync<Game>(query, new { Id = id });
+        }
+
+        public async Task<bool> Create(Game game)
+        {
+            using var connection = _database.CreateConnection();
+
+            var command = @"
+            INSERT INTO Games (StartTime, Player1Id, Status, TurnCount, BoardState) 
+            VALUES (@StartTime, @Player1Id, @Status, @TurnCount, @BoardState);";
+
+            var rowsAffected = await connection.ExecuteAsync(command, game);
+            
+            return rowsAffected > 0;
         }
     }
 }

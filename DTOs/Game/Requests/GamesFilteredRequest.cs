@@ -1,6 +1,6 @@
 ﻿using DR_Tic_Tac_Toe.Enums;
 
-namespace DR_Tic_Tac_Toe.DTOs.Requests
+namespace DR_Tic_Tac_Toe.DTOs.Game.Requests
 {
     public record GamesFilteredRequest
     {

@@ -1,5 +1,5 @@
 ﻿using DR_Tic_Tac_Toe.Authentication;
-using DR_Tic_Tac_Toe.DTOs.Requests;
+using DR_Tic_Tac_Toe.DTOs.Authentication.Requests;
 using DR_Tic_Tac_Toe.Models;
 
 namespace DR_Tic_Tac_Toe.Mappers

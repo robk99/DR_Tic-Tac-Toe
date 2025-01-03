@@ -1,8 +1,8 @@
 using DR_Tic_Tac_Toe.Authentication;
 using DR_Tic_Tac_Toe.Common.Errors;
 using DR_Tic_Tac_Toe.DB.Repositories;
-using DR_Tic_Tac_Toe.DTOs;
-using DR_Tic_Tac_Toe.DTOs.Requests;
+using DR_Tic_Tac_Toe.DTOs.Authentication.Requests;
+using DR_Tic_Tac_Toe.DTOs.User;
 using DR_Tic_Tac_Toe.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,9 +35,9 @@ namespace DR_Tic_Tac_Toe.Controllers
             }
 
             var user = _userMapper.FromRegistrationRequestToModel(request);
-            await _userRepository.Add(user);
+            var created = await _userRepository.Add(user);
 
-            return Created("", new { id = user.Id });
+            return Created("", new { created });
         }
 
 

@@ -1,6 +1,8 @@
-﻿using DR_Tic_Tac_Toe.DTOs;
+﻿using DR_Tic_Tac_Toe.DTOs.Game;
+using DR_Tic_Tac_Toe.DTOs.Game.Requests;
 using DR_Tic_Tac_Toe.Enums;
 using DR_Tic_Tac_Toe.Models;
+using DR_Tic_Tac_Toe.Utils;
 
 namespace DR_Tic_Tac_Toe.Mappers
 {
@@ -26,15 +28,15 @@ namespace DR_Tic_Tac_Toe.Mappers
                 char cell = game.BoardState[i];
 
                 if (cell == '1')
-                    board[row][col] = "X";
+                    board[row][col] = GameIcons.X.ToString();
                 else if (cell == '2')
-                    board[row][col] = "O";
+                    board[row][col] = GameIcons.O.ToString();
                 else
                     board[row][col] = null;
             }
 
             string nextTurn = game.WinnerId == null && game.Status != (int)GameStatus.Completed
-                ? (game.TurnCount % 2 == 0 ? "X" : "O")
+                ? (game.TurnCount % 2 == 0 ? GameIcons.X.ToString() : GameIcons.O.ToString())
                 : null;
 
             var status = game.WinnerId switch
@@ -52,6 +54,19 @@ namespace DR_Tic_Tac_Toe.Mappers
                 NextTurn = nextTurn,
                 Status = status
             };
+        }
+
+        public Game CreateNewGame(CreateNewGameRequest request)
+        {
+            var game = new Game
+            {
+                Player1Id = request.UserId,
+                StartTime = DateTime.Now
+            };
+
+            game.BoardState = Gameutils.SetValueOnAField(request.Field, game.BoardState);
+
+            return game;
         }
     }
 }

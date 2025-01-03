@@ -14,6 +14,7 @@ services.AddControllers()
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+services.AddScoped<ValidateUserFilter>();
 services.AddSingleton<HashingService>();
 services
     .AddSingleton<TokenService>()
@@ -28,6 +29,8 @@ var app = builder.Build();
 app.MapHealthChecks("/api/health");
 
 await app.InitializeAndSeedDB();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

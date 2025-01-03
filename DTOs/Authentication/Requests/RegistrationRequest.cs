@@ -1,4 +1,4 @@
-﻿namespace DR_Tic_Tac_Toe.DTOs.Requests
+﻿namespace DR_Tic_Tac_Toe.DTOs.Authentication.Requests
 {
     public record RegistrationRequest
     {

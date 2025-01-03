@@ -1,4 +1,4 @@
-﻿namespace DR_Tic_Tac_Toe.DTOs
+﻿namespace DR_Tic_Tac_Toe.DTOs.Game
 {
     /// <summary>
     /// Game with a detailed, more human readable board (3x3 array), next turn and status.
