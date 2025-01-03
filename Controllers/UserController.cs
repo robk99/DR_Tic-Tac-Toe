@@ -57,7 +57,7 @@ namespace DR_Tic_Tac_Toe.Controllers
 
         [Authorize]
         [HttpGet("get-details/{id}")]
-        public async Task<ActionResult<UserDetailsDto>> Get(int id)
+        public async Task<ActionResult<UserDetailsDto>> GetDetails(int id)
         {
             if (id < 1) return BadRequest(new { error = "Id not greter than 0!" });
 

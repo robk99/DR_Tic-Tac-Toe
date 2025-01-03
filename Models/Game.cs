@@ -13,5 +13,4 @@ namespace DR_Tic_Tac_Toe.Models
         public string BoardState { get; set; } = Board.GetEmptyBoardString();
         public int? WinnerId { get; set; } = null;
     }
-
 }

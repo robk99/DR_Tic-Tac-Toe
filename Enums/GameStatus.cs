@@ -1,6 +1,6 @@
 ﻿namespace DR_Tic_Tac_Toe.Enums
 {
-    enum GameStatus
+    public enum GameStatus
     {
         Open = 0,
         InProgress = 1,

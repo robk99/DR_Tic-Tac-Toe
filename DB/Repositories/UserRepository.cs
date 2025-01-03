@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using DR_Tic_Tac_Toe.DTOs;
 using DR_Tic_Tac_Toe.Models;
-using System.Data.Common;
 
 namespace DR_Tic_Tac_Toe.DB.Repositories
 {
@@ -26,7 +25,7 @@ namespace DR_Tic_Tac_Toe.DB.Repositories
         {
             using var connection = _database.CreateConnection();
 
-            const string command = @"
+            var command = @"
             INSERT INTO Users (Username, PasswordHash) 
             VALUES (@Username, @PasswordHash);";
 
@@ -43,7 +42,7 @@ namespace DR_Tic_Tac_Toe.DB.Repositories
         {
             using var connection = _database.CreateConnection();
 
-            const string query = @"
+            var query = @"
                 SELECT 
                     u.Username,
                     SUM(CASE WHEN g.Status = 2 THEN 1 ELSE 0 END) as GamesPlayed,

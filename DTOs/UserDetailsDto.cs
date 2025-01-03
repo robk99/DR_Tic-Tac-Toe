@@ -1,6 +1,6 @@
 ﻿namespace DR_Tic_Tac_Toe.DTOs
 {
-    public class UserDetailsDto
+    public record UserDetailsDto
     {
         public string Username { get; set; }
         public int GamesPlayed { get; set; }
