@@ -13,7 +13,7 @@ namespace DR_Tic_Tac_Toe.Mappers
             _hashingService = hashingService;
         }
 
-        public User FromRegistrationRequestToModel(RegistrationRequest request)
+        public User FromRegistrationRequestToModel(AuthenticationRequest request)
         {
             return new User
             {

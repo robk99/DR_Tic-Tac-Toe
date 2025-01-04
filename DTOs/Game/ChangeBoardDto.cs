@@ -1,5 +1,4 @@
 ﻿using DR_Tic_Tac_Toe.Common.Errors;
-using DR_Tic_Tac_Toe.Models;
 
 namespace DR_Tic_Tac_Toe.DTOs.Game
 {

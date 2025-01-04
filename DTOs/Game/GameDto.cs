@@ -1,6 +1,4 @@
-﻿using DR_Tic_Tac_Toe.Enums;
-
-namespace DR_Tic_Tac_Toe.DTOs.Game
+﻿namespace DR_Tic_Tac_Toe.DTOs.Game
 {
     public record GameDto
     {

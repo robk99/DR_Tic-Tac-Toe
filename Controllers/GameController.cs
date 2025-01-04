@@ -6,6 +6,8 @@ using DR_Tic_Tac_Toe.DTOs.Game.Requests;
 using DR_Tic_Tac_Toe.Enums;
 using DR_Tic_Tac_Toe.Mappers;
 using DR_Tic_Tac_Toe.Utils;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,21 +19,37 @@ namespace DR_Tic_Tac_Toe.Controllers
     {
         private readonly GameRepository _gameRepository;
         private readonly GameMapper _gameMapper;
+        private readonly IValidator<GamesFilteredRequest> _gamesFilteredRequestValidator;
+        private readonly IValidator<int> _identityValidator;
+        private readonly IValidator<StartNewGameRequest> _startNewGameRequestValidator;
+        private readonly IValidator<NewGameMoveRequest> _newGameMoveRequestValidator;
 
-        public GameController(GameRepository gameRepository, GameMapper gameMapper)
+        public GameController(GameRepository gameRepository, GameMapper gameMapper,
+            IValidator<GamesFilteredRequest> gamesFilteredRequestValidator, IValidator<int> identityValidator,
+            IValidator<StartNewGameRequest> startNewGameRequestValidator,
+            IValidator<NewGameMoveRequest> newGameMoveRequestValidator)
         {
             _gameRepository = gameRepository;
             _gameMapper = gameMapper;
+            _gamesFilteredRequestValidator = gamesFilteredRequestValidator;
+            _identityValidator = identityValidator;
+            _startNewGameRequestValidator = startNewGameRequestValidator;
+            _newGameMoveRequestValidator = newGameMoveRequestValidator;
         }
 
         [Authorize]
         [HttpGet("get-games")]
         public async Task<ActionResult<IEnumerable<GameDto>>> GetGames([FromQuery] GamesFilteredRequest request)
         {
-            // TODO: Add fluent validation for mandatory params
+            ValidationResult validationResult = await _gamesFilteredRequestValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(ValidationErrors.BadRequest(validationResult.Errors));
+            }
 
             var games = await _gameRepository.GetGamesFiltered(request);
-            
+
             return Ok(games);
         }
 
@@ -40,7 +58,11 @@ namespace DR_Tic_Tac_Toe.Controllers
         [HttpGet("get-details/{id}")]
         public async Task<ActionResult<GameDetailsDto>> GetDetails(int id)
         {
-            if (id < 1) return BadRequest(new { error = "Id not greater than 0!" });
+            ValidationResult validationResult = await _identityValidator.ValidateAsync(id);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(ValidationErrors.BadRequest(validationResult.Errors));
+            }
 
             var game = await _gameRepository.GetDetails(id);
             if (game == null) return NotFound(null);
@@ -54,7 +76,11 @@ namespace DR_Tic_Tac_Toe.Controllers
         [ServiceFilter(typeof(ValidateUserFilter))]
         public async Task<ActionResult> StartNew([FromBody] StartNewGameRequest request)
         {
-            // TODO: Add fluent validation for just 1-9 Fields
+            ValidationResult validationResult = await _startNewGameRequestValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(ValidationErrors.BadRequest(validationResult.Errors));
+            }
 
             var userId = (int)HttpContext.Items["UserId"];
 
@@ -74,7 +100,7 @@ namespace DR_Tic_Tac_Toe.Controllers
             var userId = (int)HttpContext.Items["UserId"];
 
             var game = await _gameRepository.GetDetails(request.GameId);
-            if (game == null) 
+            if (game == null)
                 return NotFound(GameErrors.NotFoundById(request.GameId));
 
             if (game.Status == (int)GameStatus.Completed)
@@ -100,7 +126,11 @@ namespace DR_Tic_Tac_Toe.Controllers
         [ServiceFilter(typeof(ValidateUserFilter))]
         public async Task<ActionResult> PlayAMove([FromBody] NewGameMoveRequest request)
         {
-            // TODO: Add fluent validation for just 1-9 Fields
+            ValidationResult validationResult = await _newGameMoveRequestValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(ValidationErrors.BadRequest(validationResult.Errors));
+            }
 
             var userId = (int)HttpContext.Items["UserId"];
 

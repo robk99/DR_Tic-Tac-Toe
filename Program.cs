@@ -2,6 +2,7 @@ using DR_Tic_Tac_Toe;
 using DR_Tic_Tac_Toe.Authentication;
 using DR_Tic_Tac_Toe.DB;
 using DR_Tic_Tac_Toe.Mappers;
+using DR_Tic_Tac_Toe.Validators;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
@@ -24,6 +25,8 @@ services
 services.AddDatabase();
 services.AddScoped<UserMapper>();
 services.AddScoped<GameMapper>();
+
+services.AddValidators();
 
 builder.Services.AddSwaggerGen(c =>
 {

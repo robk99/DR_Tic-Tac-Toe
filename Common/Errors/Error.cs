@@ -21,6 +21,9 @@
             new(message);
 
         public static Error Problem(string message) =>
-          new(message);
+            new(message);
+
+        public static Error BadRequest(string message) =>
+            new(message);
     }
 }
