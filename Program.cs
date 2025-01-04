@@ -2,6 +2,7 @@ using DR_Tic_Tac_Toe;
 using DR_Tic_Tac_Toe.Authentication;
 using DR_Tic_Tac_Toe.DB;
 using DR_Tic_Tac_Toe.Mappers;
+using DR_Tic_Tac_Toe.Middlewares;
 using DR_Tic_Tac_Toe.Validators;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
@@ -43,6 +44,8 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "KS_Application_API v1");
     });
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapHealthChecks("/api/health");
 
