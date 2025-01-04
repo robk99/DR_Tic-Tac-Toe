@@ -2,7 +2,7 @@
 {
     public static class UserErrors
     {
-        public static Error NotFoundByEmail(string username) =>
+        public static Error NotFoundByUsername(string username) =>
             BaseErrors.NotFoundByproperty("user", "username", username);
 
         public static Error NotFoundById(int id) =>
@@ -11,7 +11,7 @@
         public static Error WrongPassword(string email) =>
             Error.NotFound("The password you provided is not correct.");
 
-        public static Error EmailNotUnique(string username) =>
+        public static Error UsernameNotUnique(string username) =>
             Error.Conflict($"User with the username '{username}' already exists.");
 
         public static Error Unauthorized(string? message = null) =>

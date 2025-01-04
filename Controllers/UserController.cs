@@ -36,7 +36,7 @@ namespace DR_Tic_Tac_Toe.Controllers
         {
             if (await _userRepository.GetByUsername(request.Username) != null)
             {
-                return Conflict(UserErrors.EmailNotUnique(request.Username));
+                return Conflict(UserErrors.UsernameNotUnique(request.Username));
             }
 
             var user = _userMapper.FromRegistrationRequestToModel(request);
@@ -51,14 +51,14 @@ namespace DR_Tic_Tac_Toe.Controllers
         public async Task<ActionResult> Login([FromBody] AuthenticationRequest request)
         {
             var user = await _userRepository.GetByUsername(request.Username);
-            if (user == null) return Unauthorized(UserErrors.NotFoundByEmail(request.Username));
+            if (user == null) return Unauthorized(UserErrors.NotFoundByUsername(request.Username));
 
             bool verified = _hashingService.Verify(request.Password, user.PasswordHash);
             if (!verified) return Unauthorized(UserErrors.WrongPassword(request.Username));
 
             string token = _tokenService.CreateToken(user);
 
-            return Created("", new { token = token });
+            return Created("", new { token });
         }
 
         [Authorize]
