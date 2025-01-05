@@ -124,7 +124,7 @@ namespace DR_Tic_Tac_Toe.Controllers
 
         [HttpPut("play-move")]
         [ServiceFilter(typeof(ValidateUserFilter))]
-        public async Task<ActionResult> PlayAMove([FromBody] NewGameMoveRequest request)
+        public async Task<ActionResult<PlayMoveResponse>> PlayAMove([FromBody] NewGameMoveRequest request)
         {
             ValidationResult validationResult = await _newGameMoveRequestValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -132,40 +132,46 @@ namespace DR_Tic_Tac_Toe.Controllers
                 return BadRequest(ValidationErrors.BadRequest(validationResult.Errors));
             }
 
-            var userId = (int)HttpContext.Items["UserId"];
+            var playerId = (int)HttpContext.Items["UserId"];
 
             var game = await _gameRepository.GetDetails(request.GameId);
             if (game == null)
                 return NotFound(GameErrors.NotFoundById(request.GameId));
 
-            if (game.Player1Id != userId && game.Player2Id != userId)
+            if (game.Player1Id != playerId && game.Player2Id != playerId)
                 return Conflict(GameErrors.NotPartOfThisGame(request.GameId));
 
             if (game.Status == (int)GameStatus.Completed)
                 return Conflict(GameErrors.GameFinished(request.GameId));
 
-            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState);
+            if (!Gameutils.CheckIfItsPlayersTurn(playerId, game))
+                return Conflict(GameErrors.NotYourTurn());
+
+            GameIcons gameIcon = GameIcons.Empty;
+            if (playerId == game.Player1Id) gameIcon = GameIcons.X;
+            else gameIcon = GameIcons.O;
+
+            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState, gameIcon);
             if (changeBoardDto.Error != null) return Conflict(changeBoardDto.Error);
 
             game.BoardState = changeBoardDto.NewBoardState;
 
+            var response = new PlayMoveResponse();
             var gameFinishedDto = Gameutils.IsGameFinished(game.BoardState);
-            if (gameFinishedDto.GameFinished)
+            if (gameFinishedDto.Winner != null)
             {
-                game.Status = (int)GameStatus.Completed;
-                if (gameFinishedDto.Winner != null)
-                {
-                    game.WinnerId = gameFinishedDto.Winner == GameIcons.X ? game.Player1Id : game.Player2Id;
-                }
+                game.WinnerId = gameFinishedDto.Winner == GameIcons.X ? game.Player1Id : game.Player2Id;
+                if (playerId == game.WinnerId) response.Message = "You won!";
             }
-            else game.Status = (int)GameStatus.InProgress;
-
+            else if (gameFinishedDto.Status == GameStatus.Completed) response.Message = "It's a draw!";
+            
+            game.Status = (int)gameFinishedDto.Status;
             game.TurnCount++;
 
-            var updated = await _gameRepository.Update(game);
-            if (!updated) return Problem(DBErrors.UpdateFailed().Message);
+            response.Updated = await _gameRepository.Update(game);
+            if (!response.Updated) return Problem(DBErrors.UpdateFailed().Message);
 
-            return Ok(new { updated });
+            return Ok(response);
         }
     }
 }

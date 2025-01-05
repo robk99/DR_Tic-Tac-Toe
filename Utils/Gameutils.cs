@@ -1,6 +1,7 @@
 ﻿using DR_Tic_Tac_Toe.Common.Errors;
 using DR_Tic_Tac_Toe.DTOs.Game;
 using DR_Tic_Tac_Toe.Enums;
+using DR_Tic_Tac_Toe.Models;
 
 namespace DR_Tic_Tac_Toe.Utils
 {
@@ -13,15 +14,11 @@ namespace DR_Tic_Tac_Toe.Utils
         /// <param name="boardState">Board from the DB, e.g. 120000000</param>
         /// <param name="iconValue">1 or 2 - states for the DB, throws an error on state 0 (Empty)</param>
         /// <returns>Returns new board or current board and an error if the field is already populated</returns>
-        public static ChangeBoardDto SetValueOnABoard(int field, string boardState, GameIcons? iconValue = null)
+        public static ChangeBoardDto SetValueOnABoard(int field, string boardState, GameIcons iconValue)
         {
             var changedBoardDto = new ChangeBoardDto();
 
-            char value;
-            if (iconValue == null) value = ((int)GameIcons.X).ToString()[0];
-            else if (iconValue == GameIcons.Empty) throw new Exception("Cannot set empty value on a field");
-            else value = ((int)iconValue).ToString()[0];
-
+            char value = ((int)iconValue).ToString()[0];
             var boardStateArray = boardState.ToCharArray();
 
             if (boardStateArray[field - 1] - '0' != (int)GameIcons.Empty)
@@ -38,11 +35,16 @@ namespace DR_Tic_Tac_Toe.Utils
             return changedBoardDto;
         }
 
+        /// <summary>
+        /// By BoardState gets the current game status and the winner if any.
+        /// </summary>
+        /// <param name="boardState"></param>
+        /// <returns></returns>
         public static FinishedGameDto IsGameFinished(string boardState)
         {
             var finishedGameDto = new FinishedGameDto()
             {
-                GameFinished = false
+                Status = GameStatus.InProgress
             };
 
             int[,] board = new int[3, 3];
@@ -51,39 +53,55 @@ namespace DR_Tic_Tac_Toe.Utils
                 board[i / 3, i % 3] = boardState[i] - '0';
             }
 
-            // Check for a winner
+            // Check for a winner (horizontal and vertical)
             for (int i = 0; i < 3; i++)
             {
-                if (board[i, 0] != 0 && board[i, 0] == board[i, 1] && board[i, 1] == board[i, 2])
+                var firstHorizontalValue = board[i, 0];
+                if (firstHorizontalValue != 0 && firstHorizontalValue == board[i, 1] && firstHorizontalValue == board[i, 2])
                 {
-                    finishedGameDto.GameFinished = true;
-                    finishedGameDto.Winner = GameIcons.X;
+                    finishedGameDto.Status = GameStatus.Completed;
+                    finishedGameDto.Winner = (GameIcons)firstHorizontalValue;
                     break;
                 }
 
-                if (board[0, i] != 0 && board[0, i] == board[1, i] && board[1, i] == board[2, i])
+                var firstVerticalValue = board[0, i];
+                if (firstVerticalValue != 0 && firstVerticalValue == board[1, i] && firstVerticalValue == board[2, i])
                 {
-                    finishedGameDto.GameFinished = false;
-                    finishedGameDto.Winner = GameIcons.O;
+                    finishedGameDto.Status = GameStatus.Completed;
+                    finishedGameDto.Winner = (GameIcons)firstVerticalValue;
                     break;
                 }
             }
 
-            if (finishedGameDto.GameFinished) return finishedGameDto;
+            if (finishedGameDto.Status == GameStatus.Completed) return finishedGameDto;
 
             // Check diagonals
-            if (board[0, 0] != 0 && board[0, 0] == board[1, 1] && board[1, 1] == board[2, 2])
+            var firstLeftDiagonalValue = board[0, 0];
+            var firstRightDiagonalValue = board[0, 2];
+            if (firstLeftDiagonalValue != 0 && firstLeftDiagonalValue == board[1, 1] && firstLeftDiagonalValue == board[2, 2])
             {
-                finishedGameDto.GameFinished = true;
-                finishedGameDto.Winner = GameIcons.X;
+                finishedGameDto.Status = GameStatus.Completed;
+                finishedGameDto.Winner = (GameIcons)firstLeftDiagonalValue;
             }
-            else if (board[0, 2] != 0 && board[0, 2] == board[1, 1] && board[1, 1] == board[2, 0])
+            else if (firstRightDiagonalValue != 0 && firstRightDiagonalValue == board[1, 1] && firstRightDiagonalValue == board[2, 0])
             {
-                finishedGameDto.GameFinished = false;
-                finishedGameDto.Winner = GameIcons.O;
+                finishedGameDto.Status = GameStatus.Completed;
+                finishedGameDto.Winner = (GameIcons)firstRightDiagonalValue;
             }
-
+            else if (boardState.IndexOf('0') == -1) finishedGameDto.Status = GameStatus.Completed;
+            
             return finishedGameDto;
+        }
+
+        public static bool CheckIfItsPlayersTurn(int playerId, Game game)
+        {
+            int player1Moves = game.BoardState.Count(c => c == '1');
+            int player2Moves = game.BoardState.Count(c => c == '2');
+
+            if (playerId == game.Player1Id)
+                return player1Moves == player2Moves;
+            else 
+                return player2Moves < player1Moves;
         }
     }
 }

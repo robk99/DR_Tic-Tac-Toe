@@ -64,7 +64,7 @@ namespace DR_Tic_Tac_Toe.Mappers
                 StartTime = DateTime.Now
             };
 
-            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState);
+            var changeBoardDto = Gameutils.SetValueOnABoard(request.Field, game.BoardState, GameIcons.X);
             game.BoardState = changeBoardDto.NewBoardState;
 
             return game;

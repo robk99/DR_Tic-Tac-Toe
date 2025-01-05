@@ -201,13 +201,58 @@ namespace DR_Tic_Tac_Toe.DB
                     BoardState = "121211212",
                     WinnerId = null
                 },
-                new Game {
+                new Game { // Player 1 wins in 1 move - left diagonal
                     StartTime = DateTime.Now.AddDays(-5),
+                    Player1Id = 1,
+                    Player2Id = 3,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 8,
+                    BoardState = "122211210",
+                    WinnerId = null
+                },
+                new Game { // Player 1 wins in 1 move - right diagonal
+                    StartTime = DateTime.Now.AddDays(-9),
                     Player1Id = 1,
                     Player2Id = 2,
                     Status = (int)GameStatus.InProgress,
                     TurnCount = 8,
-                    BoardState = "122211210",
+                    BoardState = "221211012",
+                    WinnerId = null
+                },
+                new Game { // Player 1 wins in 1 move - horizontal
+                    StartTime = DateTime.Now.AddDays(-8),
+                    Player1Id = 1,
+                    Player2Id = 3,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 4,
+                    BoardState = "110220000",
+                    WinnerId = null
+                },
+                new Game { // Player 1 wins in 1 move - vertical
+                    StartTime = DateTime.Now.AddDays(-4),
+                    Player1Id = 1,
+                    Player2Id = 4,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 4,
+                    BoardState = "120120000",
+                    WinnerId = null
+                },
+                new Game { // Player 1 draws in 1 move
+                    StartTime = DateTime.Now.AddDays(-3),
+                    Player1Id = 1,
+                    Player2Id = 2,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 8,
+                    BoardState = "212121120",
+                    WinnerId = null
+                },
+                new Game { // Player 2 wins in 1 move - horizontal
+                    StartTime = DateTime.Now.AddDays(-4),
+                    Player1Id = 3,
+                    Player2Id = 4,
+                    Status = (int)GameStatus.InProgress,
+                    TurnCount = 5,
+                    BoardState = "220110100",
                     WinnerId = null
                 },
             };

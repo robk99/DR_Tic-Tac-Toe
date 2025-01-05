@@ -23,5 +23,8 @@
 
         public static Error FieldIsAlredyPopulated(int field) =>
             Error.Conflict($"Field '{field}' is already populated.");
+
+        public static Error NotYourTurn() =>
+            Error.Conflict($"You cannot play a move because it's not your turn");
     }
 }
