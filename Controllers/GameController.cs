@@ -3,6 +3,7 @@ using DR_Tic_Tac_Toe.Common.Errors;
 using DR_Tic_Tac_Toe.DB.Repositories;
 using DR_Tic_Tac_Toe.DTOs.Game;
 using DR_Tic_Tac_Toe.DTOs.Game.Requests;
+using DR_Tic_Tac_Toe.DTOs.Game.Responses;
 using DR_Tic_Tac_Toe.Enums;
 using DR_Tic_Tac_Toe.Mappers;
 using DR_Tic_Tac_Toe.Utils;
@@ -93,9 +94,9 @@ namespace DR_Tic_Tac_Toe.Controllers
         }
 
 
-        [HttpPut("join-game")]
+        [HttpPost("join-game")]
         [ServiceFilter(typeof(ValidateUserFilter))]
-        public async Task<ActionResult> JoinGame([FromBody] JoinGameRequest request)
+        public async Task<ActionResult<JoinGameResponse>> JoinGame([FromBody] JoinGameRequest request)
         {
             var userId = (int)HttpContext.Items["UserId"];
 
@@ -117,12 +118,18 @@ namespace DR_Tic_Tac_Toe.Controllers
 
             var updated = await _gameRepository.Update(game);
             if (!updated) return Problem(DBErrors.UpdateFailed().Message);
+            
+            var response = new JoinGameResponse()
+            {
+                Updated = updated,
+                Message = "You joined the game!"
+            };
 
             return Ok(new { updated });
         }
 
 
-        [HttpPut("play-move")]
+        [HttpPost("play-move")]
         [ServiceFilter(typeof(ValidateUserFilter))]
         public async Task<ActionResult<PlayMoveResponse>> PlayAMove([FromBody] NewGameMoveRequest request)
         {
